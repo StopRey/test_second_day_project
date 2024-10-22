@@ -1,23 +1,86 @@
+.tabs-row {
+    display: flex;
+    flex-direction: row;
+    width: calc(100% - 400px);
+    margin: 0 200px;
+}
+
+.navbar-div-all{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:100%;
+}
+
+.input-tab{
+    width: 400px;
+    margin-top: 10px;
+    font-size: 18px;
+    height: 40px;
+}
+
+.button-tab{
+    width: 150px;
+    margin: 10px;
+    font-size: 18px;
+    height: 40px;
+}
+
 .tab-container {
     display: flex;
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin: 10px 0;
-    overflow-x: auto;
+    flex-direction: row;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.tab-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tab-container::-webkit-scrollbar-thumb {
+    background: #7F858D66;
+    border-radius: 4px;
+}
+
+.tab-container::-webkit-scrollbar-thumb:hover {
+    background-color: grey;
+}
+
+.tab-container::-webkit-scrollbar-track {
+    background: white;
+    border-radius: 4px;
+}
+
+
+.tab-container-pin {
+    flex: 1;
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 .tab {
+    font-size: 20px;
     padding: 10px 20px;
-    margin-right: 5px;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
+    background-color: white;
+    border: 1px solid #F4F7F9;
     cursor: pointer;
 }
 
 .tab.pinned {
-    background-color: #d1ffd1; /* Зелений фон для закріплених табів */
+    background-color: #F4F7F9;
+    border-top: 2px solid #4690E2;
+}
+
+.tab.pinned:hover {
+    border-top: 2px solid #7F858D;
 }
 
 .tab:hover {
-    background-color: #e1e1e1;
+    background-color: #F4F7F9;
+}
+
+.tab.dragging {
+    background: #7F858D;
+    color: white;
+    border-color: #7F858D;
 }

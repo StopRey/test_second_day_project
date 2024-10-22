@@ -6,6 +6,7 @@ const Tabs = () => {
     const [pinnedTabs, setPinnedTabs] = useState([]);
     const [newTabName, setNewTabName] = useState('');
     const [draggedIndex, setDraggedIndex] = useState(null);
+    const [draggedArray, setDraggedArray] = useState(null); // Додати для відстеження масиву
     const [changed, setChanged] = useState(false);
 
     // Завантаження табів з localStorage
@@ -15,8 +16,7 @@ const Tabs = () => {
 
         setTabs(savedTabs);
         setPinnedTabs(savedPinnedTabs);
-
-        setChanged(true)
+        setChanged(true);
     }, []);
 
     // Збереження табів в localStorage
@@ -27,34 +27,36 @@ const Tabs = () => {
         }
     }, [changed, tabs, pinnedTabs]);
 
-    const handleDragStart = (index) => {
+    const handleDragStart = (index, arrayType) => {
         setDraggedIndex(index);
+        setDraggedArray(arrayType);
     };
 
     const handleDrop = (e, targetIndex, isPinned) => {
         e.preventDefault();
-        const draggedTab = isPinned ? pinnedTabs[draggedIndex] : tabs[draggedIndex];
+        const draggedTab = draggedArray === 'pinned' ? pinnedTabs[draggedIndex] : tabs[draggedIndex];
 
         if (isPinned) {
             setPinnedTabs((prev) => {
                 const newPinned = [...prev];
-                newPinned.splice(draggedIndex, 1); // Видаляємо з попередньої позиції
-                newPinned.splice(targetIndex, 0, draggedTab); // Додаємо на нову позицію
+                newPinned.splice(draggedIndex, 1);
+                newPinned.splice(targetIndex, 0, draggedTab);
                 return newPinned;
             });
         } else {
             setTabs((prev) => {
                 const newTabs = [...prev];
-                newTabs.splice(draggedIndex, 1); // Видаляємо з попередньої позиції
-                newTabs.splice(targetIndex, 0, draggedTab); // Додаємо на нову позицію
+                newTabs.splice(draggedIndex, 1);
+                newTabs.splice(targetIndex, 0, draggedTab);
                 return newTabs;
             });
         }
-        setDraggedIndex(null); // Скидаємо індекс перетягнутого табу
+        setDraggedIndex(null);
+        setDraggedArray(null);
     };
 
     const handleDragOver = (e) => {
-        e.preventDefault(); // Дозволяємо скидання
+        e.preventDefault();
     };
 
     const handleRightClick = (e, index, sourceArray) => {
@@ -64,12 +66,12 @@ const Tabs = () => {
         if (sourceArray === tabs) {
             setChanged(false);
             setPinnedTabs((prev) => [...prev, tabToPin]);
-            setTabs((prev) => prev.filter((_, i) => i !== index)); // Видаляємо таб з незакріплених
+            setTabs((prev) => prev.filter((_, i) => i !== index));
             setChanged(true);
         } else {
             setChanged(false);
             setTabs((prev) => [...prev, tabToPin]);
-            setPinnedTabs((prev) => prev.filter((_, i) => i !== index)); // Видаляємо таб з закріплених
+            setPinnedTabs((prev) => prev.filter((_, i) => i !== index));
             setChanged(true);
         }
     };
@@ -82,44 +84,48 @@ const Tabs = () => {
     };
 
     return (
-        <div>
-            <div className="tab-container">
-                {pinnedTabs.map((tab, index) => (
-                    <div
-                        key={index}
-                        className="tab pinned"
-                        draggable
-                        onDragStart={() => handleDragStart(index)}
-                        onDrop={(e) => handleDrop(e, index, true)}
-                        onDragOver={handleDragOver}
-                        onContextMenu={(e) => handleRightClick(e, index, pinnedTabs)}
-                    >
-                        {tab}
-                    </div>
-                ))}
-            </div>
-            <div className="tab-container">
-                {tabs.map((tab, index) => (
-                    <div
-                        key={index}
-                        className="tab"
-                        draggable
-                        onDragStart={() => handleDragStart(index)}
-                        onDrop={(e) => handleDrop(e, index, false)}
-                        onDragOver={handleDragOver}
-                        onContextMenu={(e) => handleRightClick(e, index, tabs)}
-                    >
-                        {tab}
-                    </div>
-                ))}
-            </div>
+        <div className="navbar-div-all">
             <input
+                className="input-tab"
                 type="text"
                 value={newTabName}
                 onChange={(e) => setNewTabName(e.target.value)}
                 placeholder="Назва нового табу"
             />
-            <button onClick={handleAddTab}>Додати таб</button>
+            <button className="button-tab" onClick={handleAddTab}>Додати таб</button>
+
+            <div className="tabs-row">
+                <div className="tab-container-pin">
+                    {pinnedTabs.map((tab, index) => (
+                        <div
+                            key={index}
+                            className={`tab pinned ${draggedArray === 'pinned' && draggedIndex === index ? 'dragging' : ''}`}
+                            draggable
+                            onDragStart={() => handleDragStart(index, 'pinned')}
+                            onDrop={(e) => handleDrop(e, index, true)}
+                            onDragOver={handleDragOver}
+                            onContextMenu={(e) => handleRightClick(e, index, pinnedTabs)}
+                        >
+                            {tab}
+                        </div>
+                    ))}
+                </div>
+                <div className="tab-container">
+                    {tabs.map((tab, index) => (
+                        <div
+                            key={index}
+                            className={`tab ${draggedArray === 'tabs' && draggedIndex === index ? 'dragging' : ''}`}
+                            draggable
+                            onDragStart={() => handleDragStart(index, 'tabs')}
+                            onDrop={(e) => handleDrop(e, index, false)}
+                            onDragOver={handleDragOver}
+                            onContextMenu={(e) => handleRightClick(e, index, tabs)}
+                        >
+                            {tab}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };
