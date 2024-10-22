@@ -170,13 +170,13 @@ const Tabs = () => {
         setBurgerTabs((prev) => prev.filter((_, i) => i !== index));
     }
 
-
     const handleTabClick = (tab) => {
+        if (activeTab && activeTab.name === tab.name) {
+            window.open(tab.url, '_blank');
+        }
+
         setActiveTab(tab);
-        window.open(tab.url, '_blank');
     };
-
-
 
 
     const togglePinnedTabsVisibility = () => {
